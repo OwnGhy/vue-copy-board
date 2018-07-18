@@ -10,12 +10,20 @@
         <span>copy</span>
       </button>
     </div>
-    <div class="copy-content" ref="content">
-      {{content}}
+    <div v-if="type === 'text'" class="copy-content">
+      <slot></slot>
     </div>
+    <pre v-else>
+      <code :class='`language-${language}`'>
+        <slot></slot>
+      </code>
+    </pre>
   </div>
 </template>
 <script>
+  import Prism from 'prismjs'
+  import 'prismjs/themes/prism.css'
+
   export default {
     name: 'vue-copy-board',
     props: {
@@ -23,11 +31,21 @@
         type: String,
         default: ''
       },
-      content: String
+      content: String,
+      type: {
+        type: String,
+        default: 'text',
+        enum: ['text', 'code']
+      },
+      language: {
+        type: String,
+        default: 'js'
+      }
     },
     methods: {
       copy() {
-        const txt = this.$refs.content.innerText;
+        console.log(this.$slots);
+        const txt = this.$slots.default[0].text;
         var oInput = document.createElement('input');
         oInput.value = txt;
         document.body.appendChild(oInput);
